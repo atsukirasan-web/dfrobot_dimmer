@@ -1,6 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome import automation  # <--- fixed import
+from esphome import automation
 from esphome.components import i2c
 from esphome.const import CONF_ID
 
@@ -32,35 +32,24 @@ CONFIG_SCHEMA = (
     .extend(i2c.i2c_device_schema(0x54))
 )
 
+# ✅ This function must be async
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
     await i2c.register_i2c_device(var, config)
 
-if CONF_ON_CLOCKWISE in config:
-    trigger_var = cg.Pvariable(
-        config[CONF_ID],  # lhs = ID of your component
-        var.get_clockwise_trigger()  # rhs = C++ trigger object
-    )
-    await automation.build_automation(config[CONF_ON_CLOCKWISE], [], trigger_var)
+    if CONF_ON_CLOCKWISE in config:
+        trigger_var = cg.Pvariable(config[CONF_ID], var.get_clockwise_trigger())
+        await automation.build_automation(config[CONF_ON_CLOCKWISE], [], trigger_var)
 
-if CONF_ON_COUNTER_CLOCKWISE in config:
-    trigger_var = cg.Pvariable(
-        config[CONF_ID],
-        var.get_counter_trigger()
-    )
-    await automation.build_automation(config[CONF_ON_COUNTER_CLOCKWISE], [], trigger_var)
+    if CONF_ON_COUNTER_CLOCKWISE in config:
+        trigger_var = cg.Pvariable(config[CONF_ID], var.get_counter_trigger())
+        await automation.build_automation(config[CONF_ON_COUNTER_CLOCKWISE], [], trigger_var)
 
-if CONF_ON_PRESS in config:
-    trigger_var = cg.Pvariable(
-        config[CONF_ID],
-        var.get_press_trigger()
-    )
-    await automation.build_automation(config[CONF_ON_PRESS], [], trigger_var)
+    if CONF_ON_PRESS in config:
+        trigger_var = cg.Pvariable(config[CONF_ID], var.get_press_trigger())
+        await automation.build_automation(config[CONF_ON_PRESS], [], trigger_var)
 
-if CONF_ON_LONG_PRESS in config:
-    trigger_var = cg.Pvariable(
-        config[CONF_ID],
-        var.get_long_press_trigger()
-    )
-    await automation.build_automation(config[CONF_ON_LONG_PRESS], [], trigger_var)
+    if CONF_ON_LONG_PRESS in config:
+        trigger_var = cg.Pvariable(config[CONF_ID], var.get_long_press_trigger())
+        await automation.build_automation(config[CONF_ON_LONG_PRESS], [], trigger_var)
