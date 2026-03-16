@@ -21,7 +21,8 @@ void DFRobotVisualEncoder::loop() {
 
   static uint32_t last_poll = 0;
 
-  if (millis() - last_poll < 5)
+  // poll every 20ms
+  if (millis() - last_poll < 20)
     return;
 
   last_poll = millis();
@@ -113,14 +114,14 @@ void DFRobotVisualEncoder::update_led_animation_() {
   for (int i = 0; i < leds; i++)
     mask |= (1 << i);
 
-uint8_t buffer[3];
+  uint8_t buffer[3];
 
-buffer[0] = REG_LED;
-buffer[1] = mask & 0xFF;
-buffer[2] = mask >> 8;
+  buffer[0] = REG_LED;
+  buffer[1] = mask & 0xFF;
+  buffer[2] = mask >> 8;
 
-this->write(buffer, 3);
+  this->write(buffer, 3);
 }
 
-}
+}  
 }
