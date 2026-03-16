@@ -1,22 +1,18 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import i2c
-from esphome import automation  # 2026+ compatible
+from esphome import automation
 from esphome.const import CONF_ID
 
 DEPENDENCIES = ["i2c"]
 
-# Namespace
 dfrobot_ns = cg.esphome_ns.namespace("dfrobot_visual_encoder")
-
-# Component class
 DFRobotVisualEncoder = dfrobot_ns.class_(
     "DFRobotVisualEncoder",
     cg.Component,
     i2c.I2CDevice,
 )
 
-# Config keys
 CONF_ON_CLOCKWISE = "on_clockwise"
 CONF_ON_COUNTER_CLOCKWISE = "on_counter_clockwise"
 CONF_ON_PRESS = "on_press"
@@ -33,7 +29,7 @@ CONFIG_SCHEMA = (
         }
     )
     .extend(cv.COMPONENT_SCHEMA)
-    .extend(i2c.i2c_device_schema(0x54))  # adjust I2C address if needed
+    .extend(i2c.i2c_device_schema(0x54))  # adjust if your encoder uses a different I2C address
 )
 
 async def to_code(config):
