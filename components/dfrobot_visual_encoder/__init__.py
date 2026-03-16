@@ -37,18 +37,30 @@ async def to_code(config):
     await cg.register_component(var, config)
     await i2c.register_i2c_device(var, config)
 
-    if CONF_ON_CLOCKWISE in config:
-        trigger_var = cg.Pvariable(var.get_clockwise_trigger())
-        await automation.build_automation(config[CONF_ON_CLOCKWISE], [], trigger_var)
+if CONF_ON_CLOCKWISE in config:
+    trigger_var = cg.Pvariable(
+        config[CONF_ID],  # lhs = ID of your component
+        var.get_clockwise_trigger()  # rhs = C++ trigger object
+    )
+    await automation.build_automation(config[CONF_ON_CLOCKWISE], [], trigger_var)
 
-    if CONF_ON_COUNTER_CLOCKWISE in config:
-        trigger_var = cg.Pvariable(var.get_counter_trigger())
-        await automation.build_automation(config[CONF_ON_COUNTER_CLOCKWISE], [], trigger_var)
+if CONF_ON_COUNTER_CLOCKWISE in config:
+    trigger_var = cg.Pvariable(
+        config[CONF_ID],
+        var.get_counter_trigger()
+    )
+    await automation.build_automation(config[CONF_ON_COUNTER_CLOCKWISE], [], trigger_var)
 
-    if CONF_ON_PRESS in config:
-        trigger_var = cg.Pvariable(var.get_press_trigger())
-        await automation.build_automation(config[CONF_ON_PRESS], [], trigger_var)
+if CONF_ON_PRESS in config:
+    trigger_var = cg.Pvariable(
+        config[CONF_ID],
+        var.get_press_trigger()
+    )
+    await automation.build_automation(config[CONF_ON_PRESS], [], trigger_var)
 
-    if CONF_ON_LONG_PRESS in config:
-        trigger_var = cg.Pvariable(var.get_long_press_trigger())
-        await automation.build_automation(config[CONF_ON_LONG_PRESS], [], trigger_var)
+if CONF_ON_LONG_PRESS in config:
+    trigger_var = cg.Pvariable(
+        config[CONF_ID],
+        var.get_long_press_trigger()
+    )
+    await automation.build_automation(config[CONF_ON_LONG_PRESS], [], trigger_var)
