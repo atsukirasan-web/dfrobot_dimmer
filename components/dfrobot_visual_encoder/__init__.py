@@ -1,28 +1,30 @@
-#pragma once
-#include "esphome.h"
+import esphome.codegen as cg
+import esphome.config_validation as cv
+from esphome.components import i2c
+from esphome.const import CONF_ID
 
-namespace esphome {
-namespace dfrobot_visual_encoder {
+DEPENDENCIES = ["i2c"]
 
-class DFRobotVisualEncoder : public Component, public i2c::I2CDevice {
- public:
-  void setup() override;
-  void dump_config() override;
-  void loop() override;
+dfrobot_ns = cg.esphome_ns.namespace("dfrobot_visual_encoder")
 
-  void set_led_level(uint8_t brightness);
+DFRobotVisualEncoder = dfrobot_ns.class_(
+    "DFRobotVisualEncoder",
+    cg.Component,
+    i2c.I2CDevice,
+)
 
- protected:
-  uint8_t last_status_{0};
+CONFIG_SCHEMA = (
+    cv.Schema(
+        {
+            cv.GenerateID(): cv.declare_id(DFRobotVisualEncoder),
+        }
+    )
+    .extend(cv.COMPONENT_SCHEMA)
+    .extend(i2c.i2c_device_schema(0x54))
+)
 
-  bool button_pressed_{false};
-  uint32_t press_time_{0};
+async def to_code(config):
+    var = cg.new_Pvariable(config[CONF_ID])
 
-  uint8_t current_led_level_{0};
-  uint8_t target_led_level_{0};
-
-  uint32_t last_led_update_{0};
-};
-
-}
-}
+    await cg.register_component(var, config)
+    await i2c.register_i2c_device(var, config)
