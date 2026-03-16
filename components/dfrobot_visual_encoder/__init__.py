@@ -33,17 +33,27 @@ CONFIG_SCHEMA = (
 )
 
 async def to_code(config):
-    var = await cg.get_variable(config[CONF_ID])
+    var = cg.new_Pvariable(config[CONF_ID])
+
+    await cg.register_component(var, config)
     await i2c.register_i2c_device(var, config)
 
     if CONF_ON_CLOCKWISE in config:
-        await automation.build_automation(config[CONF_ON_CLOCKWISE], [], var.get_clockwise_trigger())
+        await automation.build_automation(
+            config[CONF_ON_CLOCKWISE], [], var.get_clockwise_trigger()
+        )
 
     if CONF_ON_COUNTER_CLOCKWISE in config:
-        await automation.build_automation(config[CONF_ON_COUNTER_CLOCKWISE], [], var.get_counter_trigger())
+        await automation.build_automation(
+            config[CONF_ON_COUNTER_CLOCKWISE], [], var.get_counter_trigger()
+        )
 
     if CONF_ON_PRESS in config:
-        await automation.build_automation(config[CONF_ON_PRESS], [], var.get_press_trigger())
+        await automation.build_automation(
+            config[CONF_ON_PRESS], [], var.get_press_trigger()
+        )
 
     if CONF_ON_LONG_PRESS in config:
-        await automation.build_automation(config[CONF_ON_LONG_PRESS], [], var.get_long_press_trigger())
+        await automation.build_automation(
+            config[CONF_ON_LONG_PRESS], [], var.get_long_press_trigger()
+        )
