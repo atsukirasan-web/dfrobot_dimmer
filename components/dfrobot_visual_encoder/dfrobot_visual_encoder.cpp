@@ -34,54 +34,9 @@ void DFRobotVisualEncoder::loop() {
   if (status == last_status_)
     return;
 
-  handle_rotation_(status);
-  handle_button_(status);
+  ESP_LOGD(TAG, "Encoder status: %d", status);
 
   last_status_ = status;
-
-  update_led_animation_();
-}
-
-void DFRobotVisualEncoder::handle_rotation_(uint8_t status) {
-
-  if (status == 1) {
-    ESP_LOGD(TAG, "Clockwise");
-    clockwise_trigger_.trigger();
-  }
-
-  if (status == 2) {
-    ESP_LOGD(TAG, "Counter clockwise");
-    counter_trigger_.trigger();
-  }
-}
-
-void DFRobotVisualEncoder::handle_button_(uint8_t status) {
-
-  bool pressed = (status == 3);
-
-  if (pressed && !button_pressed_) {
-    press_time_ = millis();
-    button_pressed_ = true;
-  }
-
-  if (!pressed && button_pressed_) {
-
-    uint32_t duration = millis() - press_time_;
-    button_pressed_ = false;
-
-    if (duration > 800) {
-      long_press_trigger_.trigger();
-    } else {
-      press_trigger_.trigger();
-    }
-  }
-}
-
-void DFRobotVisualEncoder::set_led_level(uint8_t brightness) {
-  target_led_level_ = brightness;
-}
-
-void DFRobotVisualEncoder::update_led_animation_() {
 
   if (millis() - last_led_update_ < 20)
     return;
@@ -108,6 +63,10 @@ void DFRobotVisualEncoder::update_led_animation_() {
   data[1] = mask >> 8;
 
   this->write(REG_LED, data, 2);
+}
+
+void DFRobotVisualEncoder::set_led_level(uint8_t brightness) {
+  target_led_level_ = brightness;
 }
 
 }
