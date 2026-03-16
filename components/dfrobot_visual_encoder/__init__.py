@@ -7,6 +7,7 @@ from esphome.const import CONF_ID
 DEPENDENCIES = ["i2c"]
 
 dfrobot_ns = cg.esphome_ns.namespace("dfrobot_visual_encoder")
+
 DFRobotVisualEncoder = dfrobot_ns.class_(
     "DFRobotVisualEncoder",
     cg.Component,
@@ -31,6 +32,7 @@ CONFIG_SCHEMA = (
     .extend(cv.COMPONENT_SCHEMA)
     .extend(i2c.i2c_device_schema(0x54))
 )
+
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
