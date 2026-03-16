@@ -32,10 +32,8 @@ CONFIG_SCHEMA = (
     .extend(i2c.i2c_device_schema(0x54))
 )
 
-# ✅ This function must be async
 async def to_code(config):
-    var = cg.new_Pvariable(config[CONF_ID])
-    await cg.register_component(var, config)
+    var = await cg.get_variable(config[CONF_ID])  # <-- fetch existing Pvariable
     await i2c.register_i2c_device(var, config)
 
     if CONF_ON_CLOCKWISE in config:
