@@ -19,27 +19,25 @@ void DFRobotVisualEncoder::dump_config() {
 
 void DFRobotVisualEncoder::loop() {
 
-  uint32_t now = millis();
-
-  // poll hardware only every 5ms (reduces I²C traffic heavily)
   static uint32_t last_poll = 0;
 
-  if (now - last_poll > 5) {
-    last_poll = now;
+  if (millis() - last_poll < 5)
+    return;
 
-    uint8_t status;
+  last_poll = millis();
 
-    if (this->read_byte(REG_STATUS, &status) == i2c::ERROR_OK) {
+  uint8_t status;
 
-      if (status != last_status_) {
+  if (this->read_byte(REG_STATUS, &status) != i2c::ERROR_OK)
+    return;
 
-        handle_rotation_(status);
-        handle_button_(status);
+  if (status == last_status_)
+    return;
 
-        last_status_ = status;
-      }
-    }
-  }
+  handle_rotation_(status);
+  handle_button_(status);
+
+  last_status_ = status;
 
   update_led_animation_();
 }
@@ -52,7 +50,7 @@ void DFRobotVisualEncoder::handle_rotation_(uint8_t status) {
   }
 
   if (status == 2) {
-    ESP_LOGD(TAG, "Counter Clockwise");
+    ESP_LOGD(TAG, "Counter clockwise");
     counter_trigger_.trigger();
   }
 }
@@ -72,28 +70,23 @@ void DFRobotVisualEncoder::handle_button_(uint8_t status) {
     button_pressed_ = false;
 
     if (duration > 800) {
-      ESP_LOGD(TAG, "Long press");
       long_press_trigger_.trigger();
     } else {
-      ESP_LOGD(TAG, "Press");
       press_trigger_.trigger();
     }
   }
 }
 
 void DFRobotVisualEncoder::set_led_level(uint8_t brightness) {
-
   target_led_level_ = brightness;
 }
 
 void DFRobotVisualEncoder::update_led_animation_() {
 
-  uint32_t now = millis();
-
-  if (now - last_led_update_ < 20)
+  if (millis() - last_led_update_ < 20)
     return;
 
-  last_led_update_ = now;
+  last_led_update_ = millis();
 
   if (current_led_level_ == target_led_level_)
     return;
@@ -111,7 +104,6 @@ void DFRobotVisualEncoder::update_led_animation_() {
     mask |= (1 << i);
 
   uint8_t data[2];
-
   data[0] = mask & 0xFF;
   data[1] = mask >> 8;
 
