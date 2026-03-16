@@ -6,16 +6,6 @@ namespace dfrobot_visual_encoder {
 
 class DFRobotVisualEncoder : public Component, public i2c::I2CDevice {
  public:
-  Trigger<> clockwise_trigger_;
-  Trigger<> counter_trigger_;
-  Trigger<> press_trigger_;
-  Trigger<> long_press_trigger_;
-
-  Trigger<> *get_clockwise_trigger() { return &clockwise_trigger_; }
-  Trigger<> *get_counter_trigger() { return &counter_trigger_; }
-  Trigger<> *get_press_trigger() { return &press_trigger_; }
-  Trigger<> *get_long_press_trigger() { return &long_press_trigger_; }
-
   void setup() override;
   void dump_config() override;
   void loop() override;
@@ -23,10 +13,6 @@ class DFRobotVisualEncoder : public Component, public i2c::I2CDevice {
   void set_led_level(uint8_t brightness);
 
  protected:
-  void handle_rotation_(uint8_t status);
-  void handle_button_(uint8_t status);
-  void update_led_animation_();
-
   uint8_t last_status_{0};
 
   bool button_pressed_{false};
@@ -38,5 +24,5 @@ class DFRobotVisualEncoder : public Component, public i2c::I2CDevice {
   uint32_t last_led_update_{0};
 };
 
-}  
+}
 }
