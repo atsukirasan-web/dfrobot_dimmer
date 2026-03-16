@@ -1,39 +1,49 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
+from esphome import automation
 from esphome.components import i2c
 from esphome.const import CONF_ID
 
-# Define trigger keys
+DEPENDENCIES = ["i2c"]
+
+dfrobot_ns = cg.esphome_ns.namespace("dfrobot_visual_encoder")
+DFRobotVisualEncoder = dfrobot_ns.class_(
+    "DFRobotVisualEncoder",
+    cg.Component,
+    i2c.I2CDevice,
+)
+
 CONF_ON_CLOCKWISE = "on_clockwise"
 CONF_ON_COUNTER_CLOCKWISE = "on_counter_clockwise"
 CONF_ON_PRESS = "on_press"
 CONF_ON_LONG_PRESS = "on_long_press"
 
-# Component namespace
-dfrobot_visual_encoder_ns = cg.esphome_ns.namespace("dfrobot_visual_encoder")
-DFRobotVisualEncoder = dfrobot_visual_encoder_ns.class_("DFRobotVisualEncoder", cg.Component, i2c.I2CDevice)
-
-# Configuration schema
-CONFIG_SCHEMA = cv.Schema({
-    cv.Required(CONF_ID): cv.declare_id(DFRobotVisualEncoder),
-    cv.Optional(CONF_ON_CLOCKWISE): cv.All(cv.ensure_list(cv.Any()), cv.ensure_list),
-    cv.Optional(CONF_ON_COUNTER_CLOCKWISE): cv.All(cv.ensure_list(cv.Any()), cv.ensure_list),
-    cv.Optional(CONF_ON_PRESS): cv.All(cv.ensure_list(cv.Any()), cv.ensure_list),
-    cv.Optional(CONF_ON_LONG_PRESS): cv.All(cv.ensure_list(cv.Any()), cv.ensure_list),
-}).extend(i2c.i2c_device_schema(DFRobotVisualEncoder))
+CONFIG_SCHEMA = (
+    cv.Schema(
+        {
+            cv.GenerateID(): cv.declare_id(DFRobotVisualEncoder),
+            cv.Optional(CONF_ON_CLOCKWISE): automation.validate_automation(single=True),
+            cv.Optional(CONF_ON_COUNTER_CLOCKWISE): automation.validate_automation(single=True),
+            cv.Optional(CONF_ON_PRESS): automation.validate_automation(single=True),
+            cv.Optional(CONF_ON_LONG_PRESS): automation.validate_automation(single=True),
+        }
+    )
+    .extend(cv.COMPONENT_SCHEMA)
+    .extend(i2c.i2c_device_schema(0x54))
+)
 
 async def to_code(config):
-    # Step 1: Create component variable
-    var = cg.new_Pvariable(config[CONF_ID])
-    await cg.register_component(var, config)
+    var = await cg.get_variable(config[CONF_ID])
     await i2c.register_i2c_device(var, config)
 
-    # Step 2: Register automation triggers AFTER component exists
     if CONF_ON_CLOCKWISE in config:
-        await cg.register_automation(var.get_clockwise_trigger(), config[CONF_ON_CLOCKWISE])
+        await automation.build_automation(config[CONF_ON_CLOCKWISE], [], var.get_clockwise_trigger())
+
     if CONF_ON_COUNTER_CLOCKWISE in config:
-        await cg.register_automation(var.get_counter_trigger(), config[CONF_ON_COUNTER_CLOCKWISE])
+        await automation.build_automation(config[CONF_ON_COUNTER_CLOCKWISE], [], var.get_counter_trigger())
+
     if CONF_ON_PRESS in config:
-        await cg.register_automation(var.get_press_trigger(), config[CONF_ON_PRESS])
+        await automation.build_automation(config[CONF_ON_PRESS], [], var.get_press_trigger())
+
     if CONF_ON_LONG_PRESS in config:
-        await cg.register_automation(var.get_long_press_trigger(), config[CONF_ON_LONG_PRESS])
+        await automation.build_automation(config[CONF_ON_LONG_PRESS], [], var.get_long_press_trigger())
