@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import i2c, automation
-from esphome import core
+from esphome import automation  # <--- fixed import
+from esphome.components import i2c
 from esphome.const import CONF_ID
 
 DEPENDENCIES = ["i2c"]
@@ -29,7 +29,7 @@ CONFIG_SCHEMA = (
         }
     )
     .extend(cv.COMPONENT_SCHEMA)
-    .extend(i2c.i2c_device_schema(0x54))  # adjust for your I2C address
+    .extend(i2c.i2c_device_schema(0x54))
 )
 
 async def to_code(config):
