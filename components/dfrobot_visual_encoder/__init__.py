@@ -26,10 +26,10 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(DFRobotVisualEncoder),
-            cv.Optional(CONF_ON_CLOCKWISE): automation.validate_automation(),
-            cv.Optional(CONF_ON_COUNTER_CLOCKWISE): automation.validate_automation(),
-            cv.Optional(CONF_ON_PRESS): automation.validate_automation(),
-            cv.Optional(CONF_ON_LONG_PRESS): automation.validate_automation(),
+            cv.Optional(CONF_ON_CLOCKWISE): automation.validate_automation(single=True),
+            cv.Optional(CONF_ON_COUNTER_CLOCKWISE): automation.validate_automation(single=True),
+            cv.Optional(CONF_ON_PRESS): automation.validate_automation(single=True),
+            cv.Optional(CONF_ON_LONG_PRESS): automation.validate_automation(single=True),
         }
     )
     .extend(cv.COMPONENT_SCHEMA)
