@@ -22,7 +22,7 @@ CONF_ON_LONG_PRESS = "on_long_press"
 CONFIG_SCHEMA = (
     cv.Schema(
         {
-            cv.GenerateID(): cv.declare_id(DFRobotVisualEncoder),
+            cv.GenerateID(CONF_ID): cv.declare_id(DFRobotVisualEncoder),
             cv.Optional(CONF_ON_CLOCKWISE): automation.validate_automation(single=True),
             cv.Optional(CONF_ON_COUNTER_CLOCKWISE): automation.validate_automation(single=True),
             cv.Optional(CONF_ON_PRESS): automation.validate_automation(single=True),
