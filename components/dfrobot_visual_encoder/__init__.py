@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import i2c
-from esphome import automation
+from esphome.components import i2c, automation
+from esphome import core
 from esphome.const import CONF_ID
 
 DEPENDENCIES = ["i2c"]
@@ -29,7 +29,7 @@ CONFIG_SCHEMA = (
         }
     )
     .extend(cv.COMPONENT_SCHEMA)
-    .extend(i2c.i2c_device_schema(0x54))  # adjust if your encoder uses a different I2C address
+    .extend(i2c.i2c_device_schema(0x54))  # adjust for your I2C address
 )
 
 async def to_code(config):
@@ -38,18 +38,17 @@ async def to_code(config):
     await i2c.register_i2c_device(var, config)
 
     if CONF_ON_CLOCKWISE in config:
-        await automation.build_automation(
-            config[CONF_ON_CLOCKWISE], [], var.get_clockwise_trigger()
-        )
+        trigger_var = cg.Pvariable(var.get_clockwise_trigger())
+        await automation.build_automation(config[CONF_ON_CLOCKWISE], [], trigger_var)
+
     if CONF_ON_COUNTER_CLOCKWISE in config:
-        await automation.build_automation(
-            config[CONF_ON_COUNTER_CLOCKWISE], [], var.get_counter_trigger()
-        )
+        trigger_var = cg.Pvariable(var.get_counter_trigger())
+        await automation.build_automation(config[CONF_ON_COUNTER_CLOCKWISE], [], trigger_var)
+
     if CONF_ON_PRESS in config:
-        await automation.build_automation(
-            config[CONF_ON_PRESS], [], var.get_press_trigger()
-        )
+        trigger_var = cg.Pvariable(var.get_press_trigger())
+        await automation.build_automation(config[CONF_ON_PRESS], [], trigger_var)
+
     if CONF_ON_LONG_PRESS in config:
-        await automation.build_automation(
-            config[CONF_ON_LONG_PRESS], [], var.get_long_press_trigger()
-        )
+        trigger_var = cg.Pvariable(var.get_long_press_trigger())
+        await automation.build_automation(config[CONF_ON_LONG_PRESS], [], trigger_var)
