@@ -113,11 +113,11 @@ void DFRobotVisualEncoder::update_led_animation_() {
   for (int i = 0; i < leds; i++)
     mask |= (1 << i);
 
-uint8_t buffer[3] = {
-  REG_LED,
-  (uint8_t)(mask & 0xFF),
-  (uint8_t)(mask >> 8)
-};
+uint8_t buffer[3];
+
+buffer[0] = REG_LED;
+buffer[1] = mask & 0xFF;
+buffer[2] = mask >> 8;
 
 this->write(buffer, 3);
 }
